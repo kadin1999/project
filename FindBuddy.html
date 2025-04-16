@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find a Travel Buddy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e1e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: #2b2b2b;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 2px solid #fff;
+    }
+
+    .card h2 {
+      margin: 0.5rem 0 0.3rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin: 0.3rem 0;
+    }
+
+    .buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .button {
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .like {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .pass {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    .loading-spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #4caf50;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .refresh-btn {
+      background-color: #4285f4;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .no-matches {
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>💞 Find a Travel Buddy</h1>
+
+  <div id="buddyCard" class="card">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTXTMkG3CDZnxzNijB1bVVvD2nvb5FqSk",
+      authDomain: "usercollection-22aeb.firebaseapp.com",
+      projectId: "usercollection-22aeb",
+      storageBucket: "usercollection-22aeb.appspot.com",
+      messagingSenderId: "437650074506",
+      appId: "1:437650074506:web:a0d1f6f03f22d8be84f673"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let users = [];
+    let index = 0;
+    let currentUserId = null;
+    const buddyCard = document.getElementById("buddyCard");
+
+    function showError() {
+      buddyCard.innerHTML = `
+        <div class="no-matches">
+          <h2>Error loading buddies 😓</h2>
+          <p>Please try again later.</p>
+        </div>
+      `;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Please log in.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      currentUserId = user.uid;
+
+      try {
+        const snapshot = await getDocs(collection(db, "users"));
+        const currentUserDoc = snapshot.docs.find(doc => doc.id === currentUserId);
+        const currentUserData = currentUserDoc.data();
+        const liked = currentUserData.liked || [];
+        const passed = currentUserData.passed || [];
+
+        users = snapshot.docs
+          .filter(doc => doc.id !== currentUserId)
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(user => !liked.includes(user.id) && !passed.includes(user.id));
+
+        showNext();
+      } catch (err) {
+        console.error("❌ Error loading users:", err);
+        showError();
+      }
+    });
+
+    function showNext() {
+      if (index >= users.length) {
+        buddyCard.innerHTML = `
+          <div class="no-matches">
+            <h2>No more matches! 🥲</h2>
+            <p>Try again later or refresh.</p>
+            <button class="refresh-btn" onclick="window.location.reload()">Refresh</button>
+          </div>
+        `;
+        return;
+      }
+
+      const user = users[index];
+      const photoUrl = user.photos?.['0'] || 'https://www.gravatar.com/avatar/?d=mp';
+
+      buddyCard.innerHTML = `
+        <img src="${photoUrl}" alt="Profile Picture">
+        <h2>${user.name || 'Unknown'}, ${user.age || ''}</h2>
+        <p>Wants to go to ${user.placesWantToVisit || 'somewhere'} · ${user.countriesVisited?.join(', ') || '—'}</p>
+        <p>📍 ${user.location || 'Unknown'}</p>
+        <div class="buttons">
+          <button class="button pass" onclick="passBuddy()">Pass</button>
+          <button class="button like" onclick="likeBuddy()">Like</button>
+        </div>
+      `;
+    }
+
+    async function likeBuddy() {
+      const user = users[index];
+      const ref = doc(db, "users", currentUserId);
+      const currentUserSnap = await getDoc(ref);
+      const currentUserLikes = currentUserSnap.data().liked || [];
+
+      await updateDoc(ref, { liked: [...currentUserLikes, user.id] });
+
+      // Check if the other user has liked the current user
+      const otherUserRef = doc(db, "users", user.id);
+      const otherUserSnap = await getDoc(otherUserRef);
+      const otherUserLikes = otherUserSnap.data().liked || [];
+
+      if (otherUserLikes.includes(currentUserId)) {
+        // It's a match! Save it
+        const matchId = [currentUserId, user.id].sort().join('_');
+        await setDoc(doc(db, "matches", matchId), {
+          users: [currentUserId, user.id],
+          createdAt: Date.now()
+        });
+      }
+
+      index++;
+      showNext();
+    }
+
+    async function passBuddy() {
+      const user = users[index];
+      const ref = doc(db, "users", currentUserId);
+      const docSnap = await getDoc(ref);
+      const existing = docSnap.data().passed || [];
+      await updateDoc(ref, { passed: [...existing, user.id] });
+      index++;
+      showNext();
+    }
+
+    window.likeBuddy = likeBuddy;
+    window.passBuddy = passBuddy;
+  </script>
+</body>
+</html>

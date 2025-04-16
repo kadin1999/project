@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TravelBug</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    video#bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: white;
+      padding-top: 15vh;
+    }
+
+    #login-form {
+      background-color: rgba(0, 0, 0, 0.5);
+      display: inline-block;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    input, button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #ff5a5f;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e94e53;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="bg-video" autoplay loop>
+    <source src="Plane.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  
+  <script>
+    // Wait for a user click to unmute and play
+    window.addEventListener("click", () => {
+      const video = document.getElementById("bg-video");
+      video.muted = false;
+      video.play().catch(err => console.log("Play failed:", err));
+    });
+  </script>
+  
+
+  <!-- 🌍 Welcome + Login Form -->
+  <div class="content">
+    <h1>Welcome to TravelBug 🌍❤️</h1>
+    <div id="login-form">
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="password" placeholder="Password" />
+      <button id="login-btn">Login</button>
+      <button id="signup-btn">Sign Up</button>
+    </div>
+  </div>
+
+  <!-- 🔥 Firebase Auth + Firestore Check -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTXTMkG3CDZnxzNijB1bVVvD2nvb5FqSk",
+      authDomain: "usercollection-22aeb.firebaseapp.com",
+      projectId: "usercollection-22aeb",
+      storageBucket: "usercollection-22aeb.appspot.com",
+      messagingSenderId: "437650074506",
+      appId: "1:437650074506:web:a0d1f6f03f22d8be84f673"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("signup-btn").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          // Go to create profile after signup
+          window.location.href = "create-profile.html";
+        })
+        .catch(error => {
+          alert("Error: " + error.message);
+        });
+    });
+
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          // Profile exists
+          window.location.href = "TravelBugHomePage.html";
+        } else {
+          // No profile yet
+          window.location.href = "create-profile.html";
+        }
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    });
+  </script>
+
+</body>
+</html>

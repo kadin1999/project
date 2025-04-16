@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TravelBug Airport</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e1e;
+      color: #fff;
+    }
+    .container {
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background-color: #2b2b2b;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    .button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #ff4d4d;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .search-section input {
+      padding: 0.5rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to TravelBug Airport ✈️🌍</h1>
+
+    <div class="section">
+      <h2>🛫 Upcoming Flights</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Toronto</h3>
+          <p>May 1, 8:30 AM · WestJet · $320</p>
+          <a href="#" class="button">Book Now</a>
+        </div>
+        <div class="card">
+          <h3>Los Angeles</h3>
+          <p>May 2, 1:45 PM · Air Canada · $410</p>
+          <a href="#" class="button">Book Now</a>
+        </div>
+      </div>
+    </div>
+    <div style="background-color: #2b2b2b; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+      <p style="font-size: 1rem; color: #fff;">
+        💙 Help support our page by booking your next trip through our affiliate link:
+        <br />
+        <a href="https://trip.tp.st/zStxtJFP" target="_blank" style="color: #4caf50; font-weight: bold; text-decoration: underline;">
+          Click here to book with Trips.com ✈️
+        </a>
+      </p>
+    </div>
+    
+
+    <div class="section">
+      <h2>👯 Match With Travel Buddies</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Lexi, 24</h3>
+          <p>Wants to go to Paris · May 5-12</p>
+          <a href="#" class="button">Message</a>
+        </div>
+        <div class="card">
+          <h3>Jordan, 29</h3>
+          <p>Thailand backpacking · June 3-20</p>
+          <a href="#" class="button">Match</a>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+        <h2>🎯 Looking for a Travel Buddy?</h2>
+        <div class="card" style="text-align: center;">
+          <p>Click below to find someone who's going the same way as you!</p>
+          <a href="FindBuddy.html" class="button">💞 Find a Buddy</a>
+        </div>
+      </div>
+      <!-- Add this section right before the closing </div> of .container -->
+
+<div class="section" style="text-align: center;">
+  <h2>💖 Your Travel Matches</h2>
+  <p>See who you've matched with and start a conversation!</p>
+  <a href="matches.html" class="button">View Matches</a>
+</div>
+<div class="section">
+  <h2>🛫 Upcoming Flights</h2>
+  <div class="grid">
+    <!-- Existing flight cards -->
+  </div>
+  <div style="text-align: center; margin-top: 1rem;">
+    <a href="flights.html" class="button">Show More Flights</a>
+  </div>
+</div>
+
+      
+    <div class="section search-section">
+      <h2>🌍 Where Do You Wanna Go?</h2>
+      <input type="text" placeholder="Search a destination...">
+      <div class="grid">
+        <div class="card">
+          <h3>Paris</h3>
+          <p>7 travelers going · Best time: May</p>
+          <a href="#" class="button">View</a>
+        </div>
+        <div class="card">
+          <h3>Japan</h3>
+          <p>4 travelers going · Best time: April</p>
+          <a href="#" class="button">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
